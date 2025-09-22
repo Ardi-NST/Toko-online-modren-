@@ -149,6 +149,12 @@
             width: 100%;
             height: 180px;
             object-fit: cover;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666;
         }
         .product-info {
             padding: 15px;
@@ -229,6 +235,12 @@
             height: 80px;
             object-fit: cover;
             border-radius: 4px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
         }
         .cart-item-details {
             flex: 1;
@@ -410,14 +422,45 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // Data produk
+        // Fungsi untuk menghasilkan gambar placeholder SVG berdasarkan nama produk
+        function generateProductImage(name, category) {
+            // Warna latar belakang berdasarkan kategori
+            const colors = {
+                elektronik: '#e3f2fd',
+                fashion: '#fce4ec',
+                makanan: '#fff3e0',
+                'rumah-tangga': '#e8f5e9',
+                olahraga: '#e0f2f1'
+            };
+            
+            const bgColor = colors[category] || '#f5f5f5';
+            const textColor = '#666';
+            
+            // Buat SVG inline sebagai gambar placeholder
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200">
+                    <rect width="300" height="200" fill="${bgColor}"/>
+                    <text x="150" y="100" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="16" fill="${textColor}">
+                        ${name}
+                    </text>
+                    <text x="150" y="130" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="12" fill="${textColor}">
+                        ${category}
+                    </text>
+                </svg>
+            `;
+            
+            // Konversi SVG ke data URL
+            return 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+
+        // Data produk dengan gambar SVG inline
         const products = [
             {
                 id: 1,
                 name: "Smartphone X",
                 price: 2999000,
                 category: "elektronik",
-                image: "https://via.placeholder.com/300x200?text=Smartphone+X",
+                image: generateProductImage("Smartphone X", "elektronik"),
                 rating: 4.5,
                 description: "Smartphone canggih dengan kamera terbaru"
             },
@@ -426,7 +469,7 @@
                 name: "Laptop Pro",
                 price: 8999000,
                 category: "elektronik",
-                image: "https://via.placeholder.com/300x200?text=Laptop+Pro",
+                image: generateProductImage("Laptop Pro", "elektronik"),
                 rating: 4.8,
                 description: "Laptop untuk produktivitas tinggi"
             },
@@ -435,7 +478,7 @@
                 name: "Kaos Polos",
                 price: 89900,
                 category: "fashion",
-                image: "https://via.placeholder.com/300x200?text=Kaos+Polos",
+                image: generateProductImage("Kaos Polos", "fashion"),
                 rating: 4.2,
                 description: "Kaos polos nyaman untuk sehari-hari"
             },
@@ -444,7 +487,7 @@
                 name: "Sepatu Running",
                 price: 499000,
                 category: "olahraga",
-                image: "https://via.placeholder.com/300x200?text=Sepatu+Running",
+                image: generateProductImage("Sepatu Running", "olahraga"),
                 rating: 4.6,
                 description: "Sepatu lari dengan teknologi terbaru"
             },
@@ -453,7 +496,7 @@
                 name: "Blender Multifungsi",
                 price: 350000,
                 category: "rumah-tangga",
-                image: "https://via.placeholder.com/300x200?text=Blender",
+                image: generateProductImage("Blender Multifungsi", "rumah-tangga"),
                 rating: 4.3,
                 description: "Blender untuk berbagai keperluan dapur"
             },
@@ -462,7 +505,7 @@
                 name: "Snack Box",
                 price: 75000,
                 category: "makanan",
-                image: "https://via.placeholder.com/300x200?text=Snack+Box",
+                image: generateProductImage("Snack Box", "makanan"),
                 rating: 4.7,
                 description: "Kumpulan snack pilihan dalam satu box"
             },
@@ -471,7 +514,7 @@
                 name: "Headphone Wireless",
                 price: 450000,
                 category: "elektronik",
-                image: "https://via.placeholder.com/300x200?text=Headphone",
+                image: generateProductImage("Headphone Wireless", "elektronik"),
                 rating: 4.4,
                 description: "Headphone nirkabel dengan kualitas suara tinggi"
             },
@@ -480,7 +523,7 @@
                 name: "Jaket Hoodie",
                 price: 199000,
                 category: "fashion",
-                image: "https://via.placeholder.com/300x200?text=Jaket+Hoodie",
+                image: generateProductImage("Jaket Hoodie", "fashion"),
                 rating: 4.1,
                 description: "Jaket hoodie nyaman untuk cuaca dingin"
             }
@@ -527,7 +570,9 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${generateProductImage(product.name, product.category)}'">
+                    </div>
                     <div class="product-info">
                         <div class="product-title">${product.name}</div>
                         <div class="product-rating">${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5-Math.floor(product.rating))} ${product.rating}</div>
@@ -595,7 +640,9 @@
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                    <div class="cart-item-image">
+                        <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${generateProductImage(item.name, 'produk')}'">
+                    </div>
                     <div class="cart-item-details">
                         <div class="cart-item-title">${item.name}</div>
                         <div class="cart-item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
